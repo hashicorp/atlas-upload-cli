@@ -167,22 +167,30 @@ func archiveDir(
 	// to other goroutines.
 	errCh := make(chan error, 1)
 	go func() {
-		err := filepath.Walk(root, walkFn)
+		werr := filepath.Walk(root, walkFn)
 
-		// TODO: errors for everything
+		// Attempt to close all the things. If we get an error on the way
+		// and we haven't had an error yet, then record that as the critical
+		// error. But we still try to close everything.
 
 		// Close the gzip writer
-		gzipW.Close()
+		if err := gzipW.Close(); err != nil && werr == nil {
+			werr = err
+		}
 
 		// Flush the buffer
-		bufW.Flush()
+		if err := bufW.Flush(); err != nil && werr == nil {
+			werr = err
+		}
 
 		// Close the pipe
-		pw.Close()
+		if err := pw.Close(); err != nil && werr == nil {
+			werr = err
+		}
 
 		// Send any error we might have down the pipe if we have one
-		if err != nil {
-			errCh <- err
+		if werr != nil {
+			errCh <- werr
 		}
 	}()
 
