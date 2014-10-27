@@ -126,6 +126,47 @@ func TestArchive_dirSubdirsNoVCS(t *testing.T) {
 	}
 }
 
+func TestArchive_dirExclude(t *testing.T) {
+	opts := &ArchiveOpts{
+		Exclude: []string{"subdir", "subdir/*"},
+	}
+
+	r, errCh, err := Archive(testFixture("archive-subdir"), opts)
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+
+	expected := []string{
+		"bar.txt",
+		"foo.txt",
+	}
+
+	entries := testArchive(t, r, errCh)
+	if !reflect.DeepEqual(entries, expected) {
+		t.Fatalf("bad: %#v", entries)
+	}
+}
+
+func TestArchive_dirInclude(t *testing.T) {
+	opts := &ArchiveOpts{
+		Include: []string{"bar.txt"},
+	}
+
+	r, errCh, err := Archive(testFixture("archive-subdir"), opts)
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+
+	expected := []string{
+		"bar.txt",
+	}
+
+	entries := testArchive(t, r, errCh)
+	if !reflect.DeepEqual(entries, expected) {
+		t.Fatalf("bad: %#v", entries)
+	}
+}
+
 func TestArchive_git(t *testing.T) {
 	if !testHasGit {
 		t.Log("git not found, skipping")

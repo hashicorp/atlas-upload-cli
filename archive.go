@@ -122,7 +122,32 @@ func archiveDir(
 			}
 		}
 
-		// TODO: include/exclude lists
+		// If include is present, we only include what is listed
+		if len(opts.Include) > 0 {
+			skip = true
+			for _, include := range opts.Include {
+				match, err := filepath.Match(include, subpath)
+				if err != nil {
+					return err
+				}
+				if match {
+					skip = false
+					break
+				}
+			}
+		}
+
+		// If exclude, it is one last gate to excluding files
+		for _, exclude := range opts.Exclude {
+			match, err := filepath.Match(exclude, subpath)
+			if err != nil {
+				return err
+			}
+			if match {
+				skip = true
+				break
+			}
+		}
 
 		// If we have to skip this file, then skip it, properly skipping
 		// children if we're a directory.
