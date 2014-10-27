@@ -1,8 +1,11 @@
 package main
 
 import (
-	"io"
+	"bufio"
+	"path/filepath"
+	"compress/gzip"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -60,9 +63,56 @@ func archiveFile(
 }
 
 func archiveDir(
-	path string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
-	// TODO: if file is already gzipped, then send it along
-	// TODO: if file is not gzipped, then... error? or do we tar + gzip?
+	root string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
+	var vcsInclude []string
+	if opts.VCS {
+		// Populate vcsInclude using VCSList
+	}
 
-	return nil, nil, nil
+	// We're going to write to an io.Pipe so that we can ensure the other
+	// side is reading as we're writing.
+	pr, pw := io.Pipe()
+
+	// Buffer the writer so that we can keep some data moving in memory
+	// while we're compressing. 4K should be good.
+	bufW := bufio.NewWriterSize(pw, 4096)
+
+	// Gzip compress all the output data
+	gzipW := gzip.NewWriter(bufW)
+
+	// Build the function that'll do all the compression
+	walkFn := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// TODO: build the tar headers and write the tar data.
+
+		return nil
+	}
+
+	// Create all our channels so we can send data through some tubes
+	// to other goroutines.
+	errCh := make(chan error, 1)
+	go func() {
+		err := filepath.Walk(root, walkFn)
+
+		// TODO: errors for everything
+
+		// Close the gzip writer
+		gzipW.Close()
+
+		// Flush the buffer
+		bufW.Flush()
+
+		// Close the pipe
+		pw.Close()
+
+		// Send any error we might have down the pipe if we have one
+		if err != nil {
+			errCh <- err
+		}
+	}()
+
+	return pr, errCh, nil
 }
