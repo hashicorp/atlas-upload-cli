@@ -97,6 +97,25 @@ func TestArchive_dirNoVCS(t *testing.T) {
 	}
 }
 
+func TestArchive_dirSubdirsNoVCS(t *testing.T) {
+	r, errCh, err := Archive(testFixture("archive-subdir"), new(ArchiveOpts))
+	if err != nil {
+		t.Fatalf("err: %s", err)
+	}
+
+	expected := []string{
+		"bar.txt",
+		"foo.txt",
+		"subdir/",
+		"subdir/hello.txt",
+	}
+
+	entries := testArchive(t, r, errCh)
+	if !reflect.DeepEqual(entries, expected) {
+		t.Fatalf("bad: %#v", entries)
+	}
+}
+
 func testArchive(t *testing.T, r io.ReadCloser, errCh <-chan error) []string {
 	// Finish the archiving process in-memory
 	var buf bytes.Buffer

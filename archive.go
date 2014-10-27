@@ -139,6 +139,12 @@ func archiveDir(
 				"Failed creating archive header: %s", path)
 		}
 
+		// Modify the header to properly be the full subpath
+		header.Name = subpath
+		if info.IsDir() {
+			header.Name += "/"
+		}
+
 		// Write the header first to the archive.
 		if err := tarW.WriteHeader(header); err != nil {
 			return fmt.Errorf(
