@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // ArchiveOpts are the options for defining how the archive will be built.
@@ -110,6 +111,11 @@ func archiveDir(
 			skip = true
 			for _, f := range vcsInclude {
 				if f == subpath {
+					skip = false
+					break
+				}
+
+				if info.IsDir() && strings.HasPrefix(f, subpath+"/") {
 					skip = false
 					break
 				}
