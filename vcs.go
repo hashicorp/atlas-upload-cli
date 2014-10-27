@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"path/filepath"
+	"os"
 	"bytes"
 	"fmt"
 	"os/exec"
@@ -29,6 +31,33 @@ var VCSList = []*VCS{
 		Detect: []string{".git/"},
 		Files:  vcsFilesCmd("git", "ls-files"),
 	},
+}
+
+// vcsDetect detects the VCS that is used for path.
+func vcsDetect(path string) (*VCS, error) {
+	for _, v := range VCSList {
+		for _, f := range v.Detect {
+			check := filepath.Join(path, f)
+			if _, err := os.Stat(check); err == nil {
+				return v, nil
+			}
+		}
+	}
+
+	return nil, nil
+}
+
+// vcsFiles returns the files for the VCS directory path.
+func vcsFiles(path string) ([]string, error) {
+	vcs, err := vcsDetect(path)
+	if err != nil {
+		return nil, fmt.Errorf("Error detecting VCS: %s", err)
+	}
+	if vcs == nil {
+		return nil, fmt.Errorf("No VCS found for path: %s", path)
+	}
+
+	return vcs.Files(path)
 }
 
 // vcsFilesCmd creates a Files-compatible function that reads the files

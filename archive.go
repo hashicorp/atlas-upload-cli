@@ -67,7 +67,11 @@ func archiveDir(
 	root string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
 	var vcsInclude []string
 	if opts.VCS {
-		// Populate vcsInclude using VCSList
+		var err error
+		vcsInclude, err = vcsFiles(root)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
 	// We're going to write to an io.Pipe so that we can ensure the other
@@ -75,8 +79,8 @@ func archiveDir(
 	pr, pw := io.Pipe()
 
 	// Buffer the writer so that we can keep some data moving in memory
-	// while we're compressing. 4K should be good.
-	bufW := bufio.NewWriterSize(pw, 4096)
+	// while we're compressing. 4M should be good.
+	bufW := bufio.NewWriterSize(pw, 4096 * 1024)
 
 	// Gzip compress all the output data
 	gzipW := gzip.NewWriter(bufW)
@@ -87,7 +91,36 @@ func archiveDir(
 			return err
 		}
 
-		// TODO: compare exclude/include lists
+		// Get the relative path from the path since it contains the root
+		// plus the path.
+		subpath, err := filepath.Rel(root, path)
+		if err != nil {
+			return err
+		}
+
+		// If we have a list of VCS files, check that first
+		skip := false
+		if len(vcsInclude) > 0 {
+			skip = true
+			for _, f := range vcsInclude {
+				if f == subpath {
+					skip = false
+					break
+				}
+			}
+		}
+
+		// TODO: include/exclude lists
+
+		// If we have to skip this file, then skip it, properly skipping
+		// children if we're a directory.
+		if skip {
+			if info.IsDir() {
+				return filepath.SkipDir
+			}
+
+			return nil
+		}
 
 		// Read the symlink target. We don't track the error because
 		// it doesn't matter if there is an error.
