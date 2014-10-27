@@ -1,12 +1,13 @@
 package main
 
 import (
+	"archive/tar"
 	"bufio"
-	"path/filepath"
 	"compress/gzip"
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // ArchiveOpts are the options for defining how the archive will be built.
@@ -86,7 +87,45 @@ func archiveDir(
 			return err
 		}
 
-		// TODO: build the tar headers and write the tar data.
+		// TODO: compare exclude/include lists
+
+		// Read the symlink target. We don't track the error because
+		// it doesn't matter if there is an error.
+		target, _ := os.Readlink(path)
+
+		// Build the file header for the tar entry
+		header, err := tar.FileInfoHeader(info, target)
+		if err != nil {
+			return fmt.Errorf(
+				"Failed creating archive header: %s", path)
+		}
+
+		tarW := tar.NewWriter(gzipW)
+		defer tarW.Close()
+
+		// Write the header first to the archive.
+		if err := tarW.WriteHeader(header); err != nil {
+			return fmt.Errorf(
+				"Failed writing archive header: %s", path)
+		}
+
+		// If it is a directory, then we're done (no body to write)
+		if info.IsDir() {
+			return nil
+		}
+
+		// Open the target file to write the data
+		f, err := os.Open(path)
+		if err != nil {
+			return fmt.Errorf(
+				"Failed opening file '%s' to write compressed archive.", path)
+		}
+		defer f.Close()
+
+		if _, err = io.Copy(tarW, f); err != nil {
+			return fmt.Errorf(
+				"Failed copying file to archive: %s", path)
+		}
 
 		return nil
 	}
