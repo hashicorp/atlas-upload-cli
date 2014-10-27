@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
-	"path/filepath"
-	"os"
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 

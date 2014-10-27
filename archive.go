@@ -80,10 +80,13 @@ func archiveDir(
 
 	// Buffer the writer so that we can keep some data moving in memory
 	// while we're compressing. 4M should be good.
-	bufW := bufio.NewWriterSize(pw, 4096 * 1024)
+	bufW := bufio.NewWriterSize(pw, 4096*1024)
 
 	// Gzip compress all the output data
 	gzipW := gzip.NewWriter(bufW)
+
+	// Tar the file contents
+	tarW := tar.NewWriter(gzipW)
 
 	// Build the function that'll do all the compression
 	walkFn := func(path string, info os.FileInfo, err error) error {
@@ -96,6 +99,9 @@ func archiveDir(
 		subpath, err := filepath.Rel(root, path)
 		if err != nil {
 			return err
+		}
+		if subpath == "." {
+			return nil
 		}
 
 		// If we have a list of VCS files, check that first
@@ -133,9 +139,6 @@ func archiveDir(
 				"Failed creating archive header: %s", path)
 		}
 
-		tarW := tar.NewWriter(gzipW)
-		defer tarW.Close()
-
 		// Write the header first to the archive.
 		if err := tarW.WriteHeader(header); err != nil {
 			return fmt.Errorf(
@@ -172,6 +175,11 @@ func archiveDir(
 		// Attempt to close all the things. If we get an error on the way
 		// and we haven't had an error yet, then record that as the critical
 		// error. But we still try to close everything.
+
+		// Close the tar writer
+		if err := tarW.Close(); err != nil && werr == nil {
+			werr = err
+		}
 
 		// Close the gzip writer
 		if err := gzipW.Close(); err != nil && werr == nil {

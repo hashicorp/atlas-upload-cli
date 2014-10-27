@@ -2,8 +2,11 @@ package main
 
 import (
 	"io/ioutil"
+	"path/filepath"
 	"testing"
 )
+
+const fixturesDir = "./test-fixtures"
 
 func tempFile(t *testing.T) string {
 	tf, err := ioutil.TempFile("", "test")
@@ -13,4 +16,8 @@ func tempFile(t *testing.T) string {
 	defer tf.Close()
 
 	return tf.Name()
+}
+
+func testFixture(n string) string {
+	return filepath.Join(fixturesDir, n)
 }
