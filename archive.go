@@ -2,6 +2,8 @@ package main
 
 import (
 	"io"
+	"fmt"
+	"os"
 )
 
 // ArchiveOpts are the options for defining how the archive will be built.
@@ -30,5 +32,37 @@ func (o *ArchiveOpts) IsSet() bool {
 // an error occurs on the channel, reading should stop and be closed.
 func Archive(
 	path string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Direct file paths cannot have archive options
+	if !fi.IsDir() && opts.IsSet() {
+		return nil, nil, fmt.Errorf(
+			"Options such as exclude, include, and VCS can't be set when " +
+				"the path is a file.")
+	}
+
+	if fi.IsDir() {
+		return archiveDir(path, opts)
+	} else {
+		return archiveFile(path, opts)
+	}
+}
+
+func archiveFile(
+	path string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
+	// TODO: if file is already gzipped, then send it along
+	// TODO: if file is not gzipped, then... error? or do we tar + gzip?
+
+	return nil, nil, nil
+}
+
+func archiveDir(
+	path string, opts *ArchiveOpts) (io.ReadCloser, <-chan error, error) {
+	// TODO: if file is already gzipped, then send it along
+	// TODO: if file is not gzipped, then... error? or do we tar + gzip?
+
 	return nil, nil, nil
 }
