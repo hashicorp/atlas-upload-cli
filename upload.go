@@ -20,5 +20,6 @@ type UploadOpts struct {
 // done until the done channel or error channel send a value. Once either send
 // a value, the upload is stopped.
 func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error) {
+	// TODO: please to hook me up
 	return nil, nil, nil
 }
