@@ -42,6 +42,8 @@ func (cli *CLI) Run(args []string) int {
 	}
 	flags.BoolVar(&archiveOpts.VCS, "vcs", false,
 		"use VCS to detect which files to upload")
+	flags.StringVar(&uploadOpts.URL, "address", "",
+		"Harmony server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
 		"Harmony API token")
 	flags.Var((*flagSliceVar)(&archiveOpts.Exclude), "exclude",
@@ -128,6 +130,7 @@ Options:
   -include=<path>     Glob pattern of files/directories to include. This can be
                       specified multiple times. Any excludes will override
                       conflicting includes.
+  -address=<url>      The address of the Harmony server
   -token=<token>      The Harmony API token
   -vcs                Use VCS to determine which files to include/exclude
 
