@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	harmony "github.com/hashicorp/harmony-go"
 )
@@ -39,7 +38,7 @@ func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error
 	}
 
 	// Separate the slug into the user and name components
-	user, name, err := parseSlug(opts.Slug)
+	user, name, err := harmony.ParseSlug(opts.Slug)
 	if err != nil {
 		return nil, nil, fmt.Errorf("upload: %s", err)
 	}
@@ -58,22 +57,6 @@ func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error
 	}, doneCh, errCh)
 
 	return doneCh, errCh, nil
-}
-
-// parseSlug accepts a string of the format "user/name" representing an
-// application slug and separates it into the user and name components. If an
-// empty string is given, an error is returned. If the given string is not a
-// valid slug format, an error is returned.
-func parseSlug(slug string) (string, string, error) {
-	if slug == "" {
-		return "", "", fmt.Errorf("missing slug")
-	}
-
-	parts := strings.Split(slug, "/")
-	if len(parts) != 2 {
-		return "", "", fmt.Errorf("malformed slug %q", slug)
-	}
-	return parts[0], parts[1], nil
 }
 
 // Create the client - if a URL is given, construct a new Client from the URL,
