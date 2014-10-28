@@ -75,13 +75,11 @@ func (cli *CLI) Run(args []string) int {
 	}
 
 	// Get the name of the app and the path to archive
-	app, path := parsedArgs[0], parsedArgs[1]
-
-	// TODO where does path get used?
-	_ = path
+	slug, path := parsedArgs[0], parsedArgs[1]
+	uploadOpts.Slug = slug
 
 	// Get the archive reader
-	r, archiveErrCh, err := Archive(app, &archiveOpts)
+	r, archiveErrCh, err := Archive(path, &archiveOpts)
 	if err != nil {
 		fmt.Fprintf(cli.errStream, "error archiving: %s", err)
 		return ExitCodeArchiveError

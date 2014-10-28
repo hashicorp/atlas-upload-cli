@@ -42,7 +42,7 @@ func TestRun_parseError(t *testing.T) {
 func TestRun_includeFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("harmony-upload -include foo app path", " ")
+	args := strings.Split("harmony-upload -include foo hashicorp/project .", " ")
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
@@ -53,7 +53,7 @@ func TestRun_includeFlag(t *testing.T) {
 func TestRun_excludeFlag(t *testing.T) {
 	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
 	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("harmony-upload -exclude bar app path", " ")
+	args := strings.Split("harmony-upload -exclude bar hashicorp/project .", " ")
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
