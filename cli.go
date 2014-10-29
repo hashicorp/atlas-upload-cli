@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/hashicorp/harmony-go/archive"
 )
 
 // Exit codes are int valuse that represent an exit code for a particular error.
@@ -32,7 +34,7 @@ type CLI struct {
 // the name of the application. This method slices accordingly.
 func (cli *CLI) Run(args []string) int {
 	var version bool
-	var archiveOpts ArchiveOpts
+	var archiveOpts archive.ArchiveOpts
 	var uploadOpts UploadOpts
 
 	flags := flag.NewFlagSet(Name, flag.ContinueOnError)
@@ -79,7 +81,7 @@ func (cli *CLI) Run(args []string) int {
 	uploadOpts.Slug = slug
 
 	// Get the archive reader
-	r, archiveErrCh, err := Archive(path, &archiveOpts)
+	r, archiveErrCh, err := archive.Archive(path, &archiveOpts)
 	if err != nil {
 		fmt.Fprintf(cli.errStream, "error archiving: %s", err)
 		return ExitCodeArchiveError
