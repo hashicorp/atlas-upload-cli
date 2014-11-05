@@ -46,7 +46,14 @@ func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error
 	// Get the app
 	app, err := client.App(user, name)
 	if err != nil {
-		return nil, nil, fmt.Errorf("upload: %s", err)
+		if err == harmony.ErrNotFound {
+			// Application doesn't exist, attempt to create it
+			app, err = client.CreateApp(user, name)
+		}
+
+		if err != nil {
+			return nil, nil, fmt.Errorf("upload: %s", err)
+		}
 	}
 
 	doneCh, errCh := make(chan struct{}), make(chan error)
