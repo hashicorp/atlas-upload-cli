@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-const Name = "harmony-upload"
+const Name = "atlas-upload"
 const Version = "0.1.0"
 
 func main() {

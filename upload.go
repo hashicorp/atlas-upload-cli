@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"io"
 
-	harmony "github.com/hashicorp/harmony-go"
+	atlas "github.com/hashicorp/atlas-go"
 )
 
 // UploadOpts are the options for uploading the archive.
 type UploadOpts struct {
-	// URL is the Harmony endpoint. If this value is not specified, the uploader
-	// will default to the public Harmony install as defined in the harmony-go
+	// URL is the Atlas endpoint. If this value is not specified, the uploader
+	// will default to the public Atlas install as defined in the atlas-go
 	// client.
 	URL string
 
@@ -32,13 +32,13 @@ type UploadOpts struct {
 // a value, the upload is stopped.
 func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error) {
 	// Create the client
-	client, err := harmonyClient(opts)
+	client, err := atlasClient(opts)
 	if err != nil {
 		return nil, nil, fmt.Errorf("upload: %s", err)
 	}
 
 	// Separate the slug into the user and name components
-	user, name, err := harmony.ParseSlug(opts.Slug)
+	user, name, err := atlas.ParseSlug(opts.Slug)
 	if err != nil {
 		return nil, nil, fmt.Errorf("upload: %s", err)
 	}
@@ -46,7 +46,7 @@ func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error
 	// Get the app
 	app, err := client.App(user, name)
 	if err != nil {
-		if err == harmony.ErrNotFound {
+		if err == atlas.ErrNotFound {
 			// Application doesn't exist, attempt to create it
 			app, err = client.CreateApp(user, name)
 		}
@@ -68,14 +68,14 @@ func Upload(r io.Reader, opts *UploadOpts) (<-chan struct{}, <-chan error, error
 
 // Create the client - if a URL is given, construct a new Client from the URL,
 // but if not URL is given, use the default client.
-func harmonyClient(opts *UploadOpts) (*harmony.Client, error) {
-	var client *harmony.Client
+func atlasClient(opts *UploadOpts) (*atlas.Client, error) {
+	var client *atlas.Client
 	var err error
 
 	if opts.URL == "" {
-		client = harmony.DefaultClient()
+		client = atlas.DefaultClient()
 	} else {
-		client, err = harmony.NewClient(opts.URL)
+		client, err = atlas.NewClient(opts.URL)
 	}
 
 	if opts.Token != "" {

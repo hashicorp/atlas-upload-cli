@@ -6,33 +6,33 @@ import (
 	"testing"
 	"time"
 
-	harmony "github.com/hashicorp/harmony-go"
+	atlas "github.com/hashicorp/atlas-go"
 )
 
 func TestUpload_pending(t *testing.T) {
 	t.Skip("not ready yet")
 }
 
-func TestHarmonyClient_noURL(t *testing.T) {
-	client, err := harmonyClient(&UploadOpts{})
+func TestAtlasClient_noURL(t *testing.T) {
+	client, err := atlasClient(&UploadOpts{})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected := harmony.DefaultClient()
+	expected := atlas.DefaultClient()
 	if !reflect.DeepEqual(client, expected) {
 		t.Fatalf("expected %q to be %q", client, expected)
 	}
 }
 
-func TestHarmonyClient_customURL(t *testing.T) {
-	url := "https://harmony.company.com"
-	client, err := harmonyClient(&UploadOpts{URL: url})
+func TestAtlasClient_customURL(t *testing.T) {
+	url := "https://atlas.company.com"
+	client, err := atlasClient(&UploadOpts{URL: url})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	expected, err := harmony.NewClient(url)
+	expected, err := atlas.NewClient(url)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,9 +41,9 @@ func TestHarmonyClient_customURL(t *testing.T) {
 	}
 }
 
-func TestHarmonyClient_token(t *testing.T) {
+func TestAtlasClient_token(t *testing.T) {
 	token := "abcd1234"
-	client, err := harmonyClient(&UploadOpts{Token: token})
+	client, err := atlasClient(&UploadOpts{Token: token})
 	if err != nil {
 		t.Fatal(err)
 	}

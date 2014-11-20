@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/hashicorp/harmony-go/archive"
+	"github.com/hashicorp/atlas-go/archive"
 )
 
 // Exit codes are int valuse that represent an exit code for a particular error.
@@ -45,9 +45,9 @@ func (cli *CLI) Run(args []string) int {
 	flags.BoolVar(&archiveOpts.VCS, "vcs", false,
 		"use VCS to detect which files to upload")
 	flags.StringVar(&uploadOpts.URL, "address", "",
-		"Harmony server address")
+		"Atlas server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
-		"Harmony API token")
+		"Atlas API token")
 	flags.Var((*flagSliceVar)(&archiveOpts.Exclude), "exclude",
 		"files/folders to exclude")
 	flags.Var((*flagSliceVar)(&archiveOpts.Include), "include",
@@ -111,9 +111,9 @@ func (cli *CLI) Run(args []string) int {
 const usage = `
 Usage: %s [options] app path
 
-  Upload application code or artifacts to Harmony for initiating deployments.
+  Upload application code or artifacts to Atlas for initiating deployments.
 
-  "app" is the name of the application to upload to within Harmony.
+  "app" is the name of the application to upload to within Atlas.
 
   If path is a directory, it will be compressed (gzip tar) and uploaded
   in its entirety. The root of the archive will be the path. For clarity:
@@ -130,8 +130,8 @@ Options:
   -include=<path>     Glob pattern of files/directories to include. This can be
                       specified multiple times. Any excludes will override
                       conflicting includes.
-  -address=<url>      The address of the Harmony server
-  -token=<token>      The Harmony API token
+  -address=<url>      The address of the Atlas server
+  -token=<token>      The Atlas API token
   -vcs                Use VCS to determine which files to include/exclude
 
   -version            Print the version of this application
