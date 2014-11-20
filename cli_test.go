@@ -14,7 +14,7 @@ func TestRun__versionFlag(t *testing.T) {
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
-		t.Errorf("expected %s to eq %s", status, ExitCodeOK)
+		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
 	}
 
 	expected := fmt.Sprintf("atlas-upload v%s", Version)
@@ -30,7 +30,7 @@ func TestRun_parseError(t *testing.T) {
 
 	status := cli.Run(args)
 	if status != ExitCodeParseFlagsError {
-		t.Errorf("expected %s to eq %s", status, ExitCodeParseFlagsError)
+		t.Errorf("expected %d to eq %d", status, ExitCodeParseFlagsError)
 	}
 
 	expected := "flag provided but not defined: -bacon"
@@ -46,7 +46,7 @@ func TestRun_includeFlag(t *testing.T) {
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
-		t.Errorf("expected %s to eq %s", status, ExitCodeOK)
+		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
 	}
 }
 
@@ -57,6 +57,6 @@ func TestRun_excludeFlag(t *testing.T) {
 
 	status := cli.Run(args)
 	if status != ExitCodeOK {
-		t.Errorf("expected %s to eq %s", status, ExitCodeOK)
+		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
 	}
 }

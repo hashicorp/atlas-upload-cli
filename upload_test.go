@@ -21,7 +21,7 @@ func TestAtlasClient_noURL(t *testing.T) {
 
 	expected := atlas.DefaultClient()
 	if !reflect.DeepEqual(client, expected) {
-		t.Fatalf("expected %q to be %q", client, expected)
+		t.Fatalf("expected %+v to be %+v", client, expected)
 	}
 }
 
@@ -37,7 +37,7 @@ func TestAtlasClient_customURL(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !reflect.DeepEqual(client, expected) {
-		t.Fatalf("expected %q to be %q", client, expected)
+		t.Fatalf("expected %+v to be %+v", client, expected)
 	}
 }
 
