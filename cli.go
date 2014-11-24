@@ -81,7 +81,7 @@ func (cli *CLI) Run(args []string) int {
 	uploadOpts.Slug = slug
 
 	// Get the archive reader
-	r, size, err := archive.Archive(path, &archiveOpts)
+	r, err := archive.CreateArchive(path, &archiveOpts)
 	if err != nil {
 		fmt.Fprintf(cli.errStream, "error archiving: %s", err)
 		return ExitCodeArchiveError
@@ -89,7 +89,7 @@ func (cli *CLI) Run(args []string) int {
 	defer r.Close()
 
 	// Start the upload
-	doneCh, uploadErrCh, err := Upload(r, size, &uploadOpts)
+	doneCh, uploadErrCh, err := Upload(r, r.Size, &uploadOpts)
 	if err != nil {
 		fmt.Fprintf(cli.errStream, "error starting upload: %s", err)
 		return ExitCodeUploadError
