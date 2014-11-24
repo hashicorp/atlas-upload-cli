@@ -38,25 +38,3 @@ func TestRun_parseError(t *testing.T) {
 		t.Fatalf("expected %q to contain %q", errStream.String(), expected)
 	}
 }
-
-func TestRun_includeFlag(t *testing.T) {
-	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
-	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("atlas-upload -include foo hashicorp/project .", " ")
-
-	status := cli.Run(args)
-	if status != ExitCodeOK {
-		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
-	}
-}
-
-func TestRun_excludeFlag(t *testing.T) {
-	outStream, errStream := new(bytes.Buffer), new(bytes.Buffer)
-	cli := &CLI{outStream: outStream, errStream: errStream}
-	args := strings.Split("atlas-upload -exclude bar hashicorp/project .", " ")
-
-	status := cli.Run(args)
-	if status != ExitCodeOK {
-		t.Errorf("expected %d to eq %d", status, ExitCodeOK)
-	}
-}
