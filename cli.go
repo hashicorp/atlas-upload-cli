@@ -91,7 +91,7 @@ func (cli *CLI) Run(args []string) int {
 	// Start the upload
 	doneCh, uploadErrCh, err := Upload(r, size, &uploadOpts)
 	if err != nil {
-		fmt.Fprintf(cli.errStream, "error uploading: %s", err)
+		fmt.Fprintf(cli.errStream, "error starting upload: %s", err)
 		return ExitCodeUploadError
 	}
 
