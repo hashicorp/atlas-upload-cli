@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	atlas "github.com/hashicorp/atlas-go"
+	"github.com/hashicorp/atlas-go/v1"
 )
 
 // UploadOpts are the options for uploading the archive.

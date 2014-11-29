@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	atlas "github.com/hashicorp/atlas-go"
+	"github.com/hashicorp/atlas-go/v1"
 )
 
 func TestUpload_pending(t *testing.T) {
