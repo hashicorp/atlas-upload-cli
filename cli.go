@@ -71,7 +71,7 @@ func (cli *CLI) Run(args []string) int {
 	parsedArgs := flags.Args()
 
 	if len(parsedArgs) != 2 {
-		fmt.Fprintf(cli.errStream, "cli: must specify two arguments - app, path")
+		fmt.Fprintf(cli.errStream, "cli: must specify two arguments - app, path\n")
 		flags.Usage()
 		return ExitCodeBadArgs
 	}
@@ -83,7 +83,7 @@ func (cli *CLI) Run(args []string) int {
 	// Get the archive reader
 	r, err := archive.CreateArchive(path, &archiveOpts)
 	if err != nil {
-		fmt.Fprintf(cli.errStream, "error archiving: %s", err)
+		fmt.Fprintf(cli.errStream, "error archiving: %s\n", err)
 		return ExitCodeArchiveError
 	}
 	defer r.Close()
@@ -91,13 +91,13 @@ func (cli *CLI) Run(args []string) int {
 	// Start the upload
 	doneCh, uploadErrCh, err := Upload(r, r.Size, &uploadOpts)
 	if err != nil {
-		fmt.Fprintf(cli.errStream, "error starting upload: %s", err)
+		fmt.Fprintf(cli.errStream, "error starting upload: %s\n", err)
 		return ExitCodeUploadError
 	}
 
 	select {
 	case err := <-uploadErrCh:
-		fmt.Fprintf(cli.errStream, "error uploading: %s", err)
+		fmt.Fprintf(cli.errStream, "error uploading: %s\n", err)
 		return ExitCodeUploadError
 	case <-doneCh:
 	}
