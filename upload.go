@@ -30,7 +30,7 @@ type UploadOpts struct {
 // started. Otherwise, the upload has started in the background and is not
 // done until the done channel or error channel send a value. Once either send
 // a value, the upload is stopped.
-func Upload(r io.Reader, size int64, opts *UploadOpts) (<-chan struct{}, <-chan error, error) {
+func Upload(r io.Reader, size int64, opts *UploadOpts) (<-chan uint64, <-chan error, error) {
 	// Create the client
 	client, err := atlasClient(opts)
 	if err != nil {
@@ -56,12 +56,18 @@ func Upload(r io.Reader, size int64, opts *UploadOpts) (<-chan struct{}, <-chan 
 		}
 	}
 
-	doneCh, errCh := make(chan struct{}), make(chan error)
+	doneCh, errCh := make(chan uint64), make(chan error)
 
 	// Start the upload
-	go process(func() error {
-		return client.UploadApp(app, r, size)
-	}, doneCh, errCh)
+	go func() {
+		vsn, err := client.UploadApp(app, r, size)
+		if err != nil {
+			errCh <- err
+			return
+		}
+
+		doneCh <- vsn
+	}()
 
 	return doneCh, errCh, nil
 }
@@ -83,16 +89,4 @@ func atlasClient(opts *UploadOpts) (*atlas.Client, error) {
 	}
 
 	return client, err
-}
-
-// process takes an arbitrary function that returns an error, a doneCh, and an
-// errCh. The function is executed in serial and any errors are pushed onto the
-// errCh. This function blocks until it finishes, so it should be run from a
-// separate goroutine.
-func process(f func() error, doneCh chan<- struct{}, errCh chan<- error) {
-	if err := f(); err != nil {
-		errCh <- fmt.Errorf("upload: %s", err)
-		return
-	}
-	close(doneCh)
 }

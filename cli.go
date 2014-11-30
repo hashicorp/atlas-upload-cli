@@ -99,7 +99,8 @@ func (cli *CLI) Run(args []string) int {
 	case err := <-uploadErrCh:
 		fmt.Fprintf(cli.errStream, "error uploading: %s\n", err)
 		return ExitCodeUploadError
-	case <-doneCh:
+	case version := <-doneCh:
+		fmt.Printf("Uploaded %s v%d\n", slug, version)
 	}
 
 	return ExitCodeOK

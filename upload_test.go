@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
-	"time"
 
 	"github.com/hashicorp/atlas-go/v1"
 )
@@ -50,37 +48,5 @@ func TestAtlasClient_token(t *testing.T) {
 
 	if client.Token != token {
 		t.Fatalf("expected %q to be %q", client.Token, token)
-	}
-}
-
-func TestProcess_errCh(t *testing.T) {
-	doneCh, errCh := make(chan struct{}), make(chan error)
-	go process(func() error {
-		return fmt.Errorf("catastrophic failure")
-	}, doneCh, errCh)
-
-	select {
-	case <-doneCh:
-		t.Fatal("did not expect doneCh to receive data")
-	case <-errCh:
-		break
-	case <-time.After(1 * time.Second):
-		t.Fatal("no data returned in 1 second")
-	}
-}
-
-func TestProcess_doneCh(t *testing.T) {
-	doneCh, errCh := make(chan struct{}), make(chan error)
-	go process(func() error {
-		return nil
-	}, doneCh, errCh)
-
-	select {
-	case <-doneCh:
-		break
-	case err := <-errCh:
-		t.Fatal(err)
-	case <-time.After(1 * time.Second):
-		t.Fatal("no data returned in 1 second")
 	}
 }
