@@ -4,9 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/hashicorp/atlas-go/archive"
+	"github.com/mitchellh/ioprogress"
 )
 
 // Exit codes are int valuse that represent an exit code for a particular error.
@@ -88,8 +90,20 @@ func (cli *CLI) Run(args []string) int {
 	}
 	defer r.Close()
 
+	// Put a progress bar around the reader
+	pr := &ioprogress.Reader{
+		Reader: r,
+		Size:   r.Size,
+		DrawFunc: ioprogress.DrawTerminalf(os.Stdout, func(p, t int64) string {
+			return fmt.Sprintf(
+				"Uploading %s: %s",
+				slug,
+				ioprogress.DrawTextFormatBytes(p, t))
+		}),
+	}
+
 	// Start the upload
-	doneCh, uploadErrCh, err := Upload(r, r.Size, &uploadOpts)
+	doneCh, uploadErrCh, err := Upload(pr, r.Size, &uploadOpts)
 	if err != nil {
 		fmt.Fprintf(cli.errStream, "error starting upload: %s\n", err)
 		return ExitCodeUploadError
