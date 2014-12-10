@@ -52,9 +52,10 @@ Or to run a specific test in the suite:
 go test ./... -run SomeTestFunction_name
 ```
 
-Submit Pull Requests and Issues to the [Atlas Go project on GitHub][Atlas Go].
+Submit Pull Requests and Issues to the [Atlas Upload CLI project on GitHub][Atlas Upload CLI].
 
 
 [Atlas]: https://atlas.hashicorp.com "HashiCorp's Atlas"
 [Atlas Go]: https://github.com/hashicorp/atlas-go "Atlas Go on GitHub"
+[Atlas Upload CLI]: https://github.com/hashicorp/atlas-upload-cli "Atlas Upload CLI on GitHub"
 [Go]: http://golang.org "Go the language"
