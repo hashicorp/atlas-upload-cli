@@ -11,7 +11,7 @@ import (
 	"github.com/mitchellh/ioprogress"
 )
 
-// Exit codes are int valuse that represent an exit code for a particular error.
+// Exit codes are int values that represent an exit code for a particular error.
 // Sub-systems may check this unique error to determine the cause of an error
 // without parsing the output or help text.
 const (
@@ -27,12 +27,12 @@ const (
 
 // CLI is the command line object
 type CLI struct {
-	// outSteam and errStream are the standard out and standard error streams to
+	// outStream and errStream are the standard out and standard error streams to
 	// write messages from the CLI.
 	outStream, errStream io.Writer
 }
 
-// Run invokes the CLI with the given arguments. The first arugment is always
+// Run invokes the CLI with the given arguments. The first argument is always
 // the name of the application. This method slices accordingly.
 func (cli *CLI) Run(args []string) int {
 	var version bool
