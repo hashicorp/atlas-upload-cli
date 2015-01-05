@@ -4,10 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 
 	"github.com/hashicorp/atlas-go/archive"
+	"github.com/hashicorp/logutils"
 	"github.com/mitchellh/ioprogress"
 )
 
@@ -25,6 +27,11 @@ const (
 	ExitCodeUploadError
 )
 
+// levelFilter is the log filter with pre-defined levels
+var levelFilter = &logutils.LevelFilter{
+	Levels: []logutils.LogLevel{"DEBUG", "INFO", "WARN", "ERR"},
+}
+
 // CLI is the command line object
 type CLI struct {
 	// outStream and errStream are the standard out and standard error streams to
@@ -35,7 +42,10 @@ type CLI struct {
 // Run invokes the CLI with the given arguments. The first argument is always
 // the name of the application. This method slices accordingly.
 func (cli *CLI) Run(args []string) int {
-	var version bool
+	// Initialize the logger to start (overridden later if debug is given)
+	cli.initLogger(os.Getenv("ATLAS_LOG"))
+
+	var debug, version bool
 	var archiveOpts archive.ArchiveOpts
 	var uploadOpts UploadOpts
 
@@ -54,12 +64,19 @@ func (cli *CLI) Run(args []string) int {
 		"files/folders to exclude")
 	flags.Var((*flagSliceVar)(&archiveOpts.Include), "include",
 		"files/folders to include")
+	flags.BoolVar(&debug, "debug", false,
+		"turn on debug output")
 	flags.BoolVar(&version, "version", false,
 		"display the version")
 
 	// Parse all the flags
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeParseFlagsError
+	}
+
+	// Turn on debug mode if requested
+	if debug {
+		levelFilter.SetMinLevel(logutils.LogLevel("DEBUG"))
 	}
 
 	// Version
@@ -120,6 +137,19 @@ func (cli *CLI) Run(args []string) int {
 	return ExitCodeOK
 }
 
+// initLogger gets the log level from the environment, falling back to DEBUG if
+// nothing was given.
+func (cli *CLI) initLogger(level string) {
+	minLevel := strings.ToUpper(strings.TrimSpace(level))
+	if minLevel == "" {
+		minLevel = "WARN"
+	}
+
+	levelFilter.Writer = cli.errStream
+	levelFilter.SetMinLevel(logutils.LogLevel(level))
+	log.SetOutput(levelFilter)
+}
+
 const usage = `
 Usage: %s [options] app path
 
@@ -137,15 +167,16 @@ Usage: %s [options] app path
 
 Options:
 
-  -exclude=<path>     Glob pattern of files or directories to exlude. This can
-                      be specified multiple times.
-  -include=<path>     Glob pattern of files/directories to include. This can be
-                      specified multiple times. Any excludes will override
-                      conflicting includes.
+  -exclude=<path>     Glob pattern of files or directories to exlude (this may
+                      be specified multiple times)
+  -include=<path>     Glob pattern of files/directories to include (this may be
+                      specified multiple times, any excludes will override
+                      conflicting includes)
   -address=<url>      The address of the Atlas server
   -token=<token>      The Atlas API token
   -vcs                Use VCS to determine which files to include/exclude
 
+  -debug              Turn on debug output
   -version            Print the version of this application
 `
 

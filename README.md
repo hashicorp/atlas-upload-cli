@@ -18,6 +18,7 @@ service like Jenkins or Travis CI) to initiate Atlas-based deploys.
 
 Usage
 -----
+For the most up-to-date documentation for your version, run `atlas-upload -h`.
 
 
 FAQ
