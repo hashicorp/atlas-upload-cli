@@ -176,7 +176,7 @@ Options:
   -token=<token>      The Atlas API token
   -vcs                Use VCS to determine which files to include/exclude
 
-  -debug              Turn on debug putput
+  -debug              Turn on debug output
   -version            Print the version of this application
 `
 
