@@ -19,6 +19,9 @@ type UploadOpts struct {
 
 	// Token is the API token to upload with.
 	Token string
+
+	// Metadata is the arbitrary metadata to upload with this application.
+	Metadata map[string]interface{}
 }
 
 // Upload uploads the reader, representing a single archive, to the
@@ -60,7 +63,7 @@ func Upload(r io.Reader, size int64, opts *UploadOpts) (<-chan uint64, <-chan er
 
 	// Start the upload
 	go func() {
-		vsn, err := client.UploadApp(app, r, size)
+		vsn, err := client.UploadApp(app, opts.Metadata, r, size)
 		if err != nil {
 			errCh <- err
 			return
