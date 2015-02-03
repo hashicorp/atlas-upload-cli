@@ -60,10 +60,12 @@ func (cli *CLI) Run(args []string) int {
 		"Atlas server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
 		"Atlas API token")
-	flags.Var((*flagSliceVar)(&archiveOpts.Exclude), "exclude",
+	flags.Var((*FlagSliceVar)(&archiveOpts.Exclude), "exclude",
 		"files/folders to exclude")
-	flags.Var((*flagSliceVar)(&archiveOpts.Include), "include",
+	flags.Var((*FlagSliceVar)(&archiveOpts.Include), "include",
 		"files/folders to include")
+	flags.Var((*FlagMetadataVar)(&uploadOpts.Metadata), "metadata",
+		"arbitrary metadata to pass along with the request")
 	flags.BoolVar(&debug, "debug", false,
 		"turn on debug output")
 	flags.BoolVar(&version, "version", false,
@@ -176,22 +178,9 @@ Options:
   -token=<token>      The Atlas API token
   -vcs                Use VCS to determine which files to include/exclude
 
+  -metadata<k=v>      Arbitrary key-value (string) metadata to be sent with the
+                      upload; may be specified multiple times
+
   -debug              Turn on debug output
   -version            Print the version of this application
 `
-
-// flagSliceVar is a special flag that permits the value to be supplied more
-// than once. Values are pushed onto a string slice.
-type flagSliceVar []string
-
-func (fsv *flagSliceVar) String() string {
-	return strings.Join(*fsv, ",")
-}
-
-func (fsv *flagSliceVar) Set(value string) error {
-	if *fsv == nil {
-		*fsv = make([]string, 0, 1)
-	}
-	*fsv = append(*fsv, value)
-	return nil
-}
