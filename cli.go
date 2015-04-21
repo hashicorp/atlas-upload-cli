@@ -169,7 +169,7 @@ Usage: %s [options] app path
 
 Options:
 
-  -exclude=<path>     Glob pattern of files or directories to exlude (this may
+  -exclude=<path>     Glob pattern of files or directories to exclude (this may
                       be specified multiple times)
   -include=<path>     Glob pattern of files/directories to include (this may be
                       specified multiple times, any excludes will override
