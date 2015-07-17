@@ -5,7 +5,7 @@ import (
 )
 
 const Name = "atlas-upload"
-const Version = "0.2.0.dev"
+const Version = "0.2.0"
 
 func main() {
 	cli := &CLI{outStream: os.Stdout, errStream: os.Stderr}

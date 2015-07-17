@@ -6,7 +6,7 @@ all: build
 
 deps: Makefile
 	go get -d -v ./...
-	echo $(DEPS) | xargs -r -n1 go get -d
+	echo $(DEPS) | xargs -n1 go get -d
 	touch $@
 
 build: bin/$(NAME)
