@@ -92,7 +92,7 @@ func (cli *CLI) Run(args []string) int {
 	parsedArgs := flags.Args()
 
 	if len(parsedArgs) != 2 {
-		fmt.Fprintf(cli.errStream, "cli: must specify two arguments - app, path\n")
+		fmt.Fprintf(cli.errStream, "cli: must specify two arguments - slug, path\n")
 		flags.Usage()
 		return ExitCodeBadArgs
 	}
@@ -153,11 +153,11 @@ func (cli *CLI) initLogger(level string) {
 }
 
 const usage = `
-Usage: %s [options] app path
+Usage: %s [options] slug path
 
   Upload application code or artifacts to Atlas for initiating deployments.
 
-  "app" is the name of the application to upload to within Atlas.
+  "slug" is the name of the <username>/<application_name> to upload to within Atlas.
 
   If path is a directory, it will be compressed (gzip tar) and uploaded
   in its entirety. The root of the archive will be the path. For clarity:
