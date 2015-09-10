@@ -18,8 +18,39 @@ service like Jenkins or Travis CI) to initiate Atlas-based deploys.
 
 Usage
 -----
-For the most up-to-date documentation for your version, run `atlas-upload -h`.
 
+```
+atlas-upload [options] slug path
+
+  Upload application code or artifacts to Atlas for initiating deployments.
+
+  "slug" is the name of the <username>/<application_name> to upload to within Atlas.
+
+  If path is a directory, it will be compressed (gzip tar) and uploaded
+  in its entirety. The root of the archive will be the path. For clarity:
+  if you upload the "foo/" directory, then the file "foo/version" will be
+  "version" in the archive since "foo/" is the root.
+
+  A path must be specified. Due to the nature of this application, it does
+  not default to using the current working directory automatically.
+
+Options:
+
+  -exclude=<path>     Glob pattern of files or directories to exclude (this may
+                      be specified multiple times)
+  -include=<path>     Glob pattern of files/directories to include (this may be
+                      specified multiple times, any excludes will override
+                      conflicting includes)
+  -address=<url>      The address of the Atlas server
+  -token=<token>      The Atlas API token
+  -vcs                Use VCS to determine which files to include/exclude
+
+  -metadata<k=v>      Arbitrary key-value (string) metadata to be sent with the
+                      upload; may be specified multiple times
+
+  -debug              Turn on debug output
+  -version            Print the version of this application
+```
 
 FAQ
 ---
