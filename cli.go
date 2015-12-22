@@ -55,7 +55,7 @@ func (cli *CLI) Run(args []string) int {
 		fmt.Fprintf(cli.errStream, usage, Name)
 	}
 	flags.BoolVar(&archiveOpts.VCS, "vcs", false,
-		"use VCS to detect which files to upload")
+		"Uses VCS to determine files to exclude and include")
 	flags.StringVar(&uploadOpts.URL, "address", "",
 		"Atlas server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
@@ -176,7 +176,8 @@ Options:
                       conflicting includes)
   -address=<url>      The address of the Atlas server
   -token=<token>      The Atlas API token
-  -vcs                Use VCS to determine which files to include/exclude
+  -vcs                Get lists of files to exclude and include from a version
+                      control system (Git, Mercurial or Subversion)
 
   -metadata<k=v>      Arbitrary key-value (string) metadata to be sent with the
                       upload; may be specified multiple times
