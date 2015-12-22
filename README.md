@@ -43,7 +43,7 @@ Options:
                       conflicting includes)
   -address=<url>      The address of the Atlas server
   -token=<token>      The Atlas API token
-  -vcs                Get lists of files to exclude and include from version
+  -vcs                Get lists of files to exclude and include from a version
                       control system (Git, Mercurial or Subversion)
   -metadata<k=v>      Arbitrary key-value (string) metadata to be sent with the
                       upload; may be specified multiple times
