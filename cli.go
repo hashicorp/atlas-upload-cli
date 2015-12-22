@@ -55,7 +55,7 @@ func (cli *CLI) Run(args []string) int {
 		fmt.Fprintf(cli.errStream, usage, Name)
 	}
 	flags.BoolVar(&archiveOpts.VCS, "vcs", false,
-		"use VCS to detect which files to upload")
+		"Get lists of files to exclude and include from a version control system (Git, Mercurial or Subversion)")
 	flags.StringVar(&uploadOpts.URL, "address", "",
 		"Atlas server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
