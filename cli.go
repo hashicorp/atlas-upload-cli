@@ -55,7 +55,7 @@ func (cli *CLI) Run(args []string) int {
 		fmt.Fprintf(cli.errStream, usage, Name)
 	}
 	flags.BoolVar(&archiveOpts.VCS, "vcs", false,
-		"Uses VCS to determine  files to exclude and include")
+		"Uses VCS to determine files to exclude and include")
 	flags.StringVar(&uploadOpts.URL, "address", "",
 		"Atlas server address")
 	flags.StringVar(&uploadOpts.Token, "token", "",
