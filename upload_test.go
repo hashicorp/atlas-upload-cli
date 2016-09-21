@@ -16,8 +16,10 @@ func TestAtlasClient_noURL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	client.HTTPClient = nil
 
 	expected := atlas.DefaultClient()
+	expected.HTTPClient = nil
 	if !reflect.DeepEqual(client, expected) {
 		t.Fatalf("expected %+v to be %+v", client, expected)
 	}
@@ -29,11 +31,13 @@ func TestAtlasClient_customURL(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	client.HTTPClient = nil
 
 	expected, err := atlas.NewClient(url)
 	if err != nil {
 		t.Fatal(err)
 	}
+	expected.HTTPClient = nil
 	if !reflect.DeepEqual(client, expected) {
 		t.Fatalf("expected %+v to be %+v", client, expected)
 	}
